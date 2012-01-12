@@ -52,8 +52,8 @@ Ext.define('PartKeepr.PartDisplay', {
 					'<td class="o">'+i18n("Needs Review")+':</td>',
 					'<td class="o">{needsReview}</td>',
 					'</tr>',
-				'</table>');
-		
+				'</table>',
+				'<input value="Place Component" type="button" onclick="window.open(\'placeComponent.php?id={id}\')">');
 		/**
 		 * Create the "add stock" button
 		 */
