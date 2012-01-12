@@ -1,12 +1,13 @@
 <?php
-include_once 'Doctrine/Common/ClassLoader.php';
+@include_once 'Doctrine/Common/ClassLoader.php';
 
 /**
  * Check if the Doctrine Common classloader can be loaded 
  */
 $installDoctrineError  = "Doctrine needs to be installed and in the PHP include_path. ";
 $installDoctrineError .= "You can install doctrine on most unix systems using: <br/>";
-$installDoctrineError .= "<br/><code>pear channel-discover pear.doctrine-project.org<br/>";
+$installDoctrineError .= "<br/><code>pear channel-discover pear.symfony.com<br/>";
+$installDoctrineError .= "pear channel-discover pear.doctrine-project.org<br/>";
 $installDoctrineError .= "pear install pear.doctrine-project.org/DoctrineORM</code><br/>";
 
 if (!class_exists("\\Doctrine\\Common\ClassLoader")) {

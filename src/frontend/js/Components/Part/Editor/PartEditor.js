@@ -19,13 +19,34 @@ Ext.define('PartKeepr.PartEditor', {
 	 */
 	initComponent: function () {
 		
+		this.nameField = Ext.create("Ext.form.field.Text", {
+			name: 'name',
+			fieldLabel: i18n("Name"),
+			allowBlank: false,
+			labelWidth: 150
+		});
+		
+		this.storageLocationComboBox = Ext.create("PartKeepr.StorageLocationComboBox",
+			{
+				fieldLabel: i18n("Storage Location"),
+				name: 'storageLocation',
+				allowBlank: false,
+				labelWidth: 150
+			});
+		
+		this.storageLocationComboBox.store.on("load", function () {
+			// Re-trigger validation because of asynchronous loading of the storage location field,
+			// which would be marked invalid because validation happens immediately, but after loading
+			// the storage locations, the field is valid, but not re-validated.
+			
+			// This workaround is done twice; once after the store is loaded and once when we start editing,
+			// because we don't know which event will come first
+			this.getForm().isValid();
+		}, this);
+		
 		// Defines the basic editor fields
-		var basicEditorFields = [{
-				xtype: 'textfield',
-				name: 'name',
-				fieldLabel: i18n("Name"),
-				allowBlank: false
-			},
+		var basicEditorFields = [
+			this.nameField,
 			{
 				layout: 'column',
 				bodyStyle: 'background:#DBDBDB',
@@ -52,12 +73,9 @@ Ext.define('PartKeepr.PartEditor', {
 				xtype: 'CategoryComboBox',
 				fieldLabel: i18n("Category"),
 				name: 'category'
-			},{
-				xtype: 'StorageLocationComboBox',
-				fieldLabel: i18n("Storage Location"),
-				name: 'storageLocation',
-				allowBlank: false
-			},{
+			},
+			this.storageLocationComboBox,
+			{
 				xtype: 'FootprintComboBox',
 				fieldLabel: i18n("Footprint"),
 				name: 'footprint'
@@ -80,24 +98,28 @@ Ext.define('PartKeepr.PartEditor', {
 		// Creates the distributor grid
 		this.partDistributorGrid = Ext.create("PartKeepr.PartDistributorGrid", {
 			title: i18n("Distributors"),
+			iconCls: 'icon-lorry',
 			layout: 'fit'
 		});
 		
 		// Creates the manufacturer grid
 		this.partManufacturerGrid = Ext.create("PartKeepr.PartManufacturerGrid", {
 			title: i18n("Manufacturers"),
+			iconCls: 'icon-building',
 			layout: 'fit'
 		});
 		
 		// Creates the parameter grid
 		this.partParameterGrid = Ext.create("PartKeepr.PartParameterGrid", {
 			title: i18n("Parameters"),
+			iconCls: 'icon-table',
 			layout: 'fit'
 		});
 		
 		// Creates the attachment grid
 		this.partAttachmentGrid = Ext.create("PartKeepr.PartAttachmentGrid", {
 			title: i18n("Attachments"),
+			iconCls: 'icon-attach',
 			layout: 'fit'
 		});
 		
@@ -160,6 +182,7 @@ Ext.define('PartKeepr.PartEditor', {
 				border: false,
 				plain: true,
 				items: [{
+					iconCls: 'icon-brick',
 					xtype: 'panel',
 					border: false,
 					autoScroll: true,
@@ -189,6 +212,15 @@ Ext.define('PartKeepr.PartEditor', {
 	},
 	onEditStart: function () {
 		this.bindChildStores();
+		this.nameField.focus();
+		
+		// Re-trigger validation because of asynchronous loading of the storage location field,
+		// which would be marked invalid because validation happens immediately, but after loading
+		// the storage locations, the field is valid, but not re-validated.
+		
+		// This workaround is done twice; once after the store is loaded and once when we start editing,
+		// because we don't know which event will come first
+		this.getForm().isValid();
 	},
 	_onItemSaved: function () {
 		this.fireEvent("partSaved", this.record);
@@ -205,13 +237,6 @@ Ext.define('PartKeepr.PartEditor', {
 		this.partManufacturerGrid.bindStore(this.record.manufacturers());
 		this.partParameterGrid.bindStore(this.record.parameters());
 		this.partAttachmentGrid.bindStore(this.record.attachments());
-	},
-	onItemSave: function () {
-		if (!this.getForm().isValid()) {
-			return;
-		}
-		
-		this.callParent();
 	},
 	_setTitle: function (title) {
 		var tmpTitle;

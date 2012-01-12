@@ -207,7 +207,7 @@ Ext.define('PartKeepr.PartsGrid', {
 	{
 		var ret = "";
 		if (rec.get("attachmentCount") > 0) {
-			ret += '<img src="resources/silkicons/attach.png" alt="'+i18n("Has attachments")+'" title="'+i18n("Has attachments")+'"/>';
+			ret += '<img src="resources/diagona-icons/icons/10/190.png" style="margin-top: 2px;" alt="'+i18n("Has attachments")+'" title="'+i18n("Has attachments")+'"/>';
 		}
 		
 		return ret;
@@ -223,7 +223,6 @@ Ext.define('PartKeepr.PartsGrid', {
 		proxy.extraParams.category = category;
 		this.searchField.onTrigger1Click();
 		
-		proxy.extraParams.start = 0;
 		this.store.currentPage = 1;
 		this.store.load({ start: 0});
 	},

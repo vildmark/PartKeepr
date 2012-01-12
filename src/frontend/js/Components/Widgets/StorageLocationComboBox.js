@@ -3,22 +3,26 @@ Ext.define("PartKeepr.StorageLocationComboBox",{
     alias: 'widget.StorageLocationComboBox',
     displayField: 'name',
     valueField: 'id',
-    autoSelect: true,
     queryMode: 'local',
     triggerAction: 'all',
-  
+    
+    trigger2Cls: Ext.baseCSSPrefix + 'form-reload-trigger',
+    
+    onTrigger1Click: function () {
+    	this.onTriggerClick();
+    },
+    onTrigger2Click: function () {
+    	this.expand();
+    	this.store.load();
+    },
     initComponent: function () {
-		this.store = PartKeepr.getApplication().getStorageLocationStore();
-		
-		/* Workaround to remember the value when loading */
-		this.store.on("beforeload", function () {
-			this._oldValue = this.getValue();
-		}, this);
-		
-		/* Set the old value when load is complete */
-		this.store.on("load", function () {
-			this.setValue(this._oldValue);
-		}, this);
+		this.store = Ext.create("Ext.data.Store",
+			{
+				model: 'PartKeepr.StorageLocation',
+				proxy: PartKeepr.getRESTProxy("StorageLocation"),
+				pageSize: -1,
+				autoLoad: true
+			});
 		
 		this.callParent();
     }
